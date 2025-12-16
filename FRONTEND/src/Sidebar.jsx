@@ -10,11 +10,19 @@ function Sidebar() {
     const getAllThreads = async () => {
 
         try {
-            const response = await fetch(`${API_URL}/thread`); //  `${API_URL}/thread`
-            const res = await response.json();
+            const response = await fetch(`${API_URL}/thread`); 
 
-            const filteredData = res.map(thread => ({threadId: thread.threadId, title: thread.title}));
-            // console.log(filteredData);
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("Thread API failed:", response.status, text);
+                return;
+            }
+            const res = await response.json();
+               
+            const filteredData = res.map(thread => ({
+                threadId: thread.threadId, 
+                title: thread.title
+            }));
             setAllThreads(filteredData);
 
         } catch (error) {
