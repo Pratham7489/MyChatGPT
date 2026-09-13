@@ -71,7 +71,12 @@ router.post("/chat", async (req, res) => {
 
     thread.messages.push({ role: "user", content: message });
 
-    const assistantReply = await getOpenAIAPIResponse(message);
+    const messages = thread.messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
+    const assistantReply = await getOpenAIAPIResponse(messages);
 
     thread.messages.push({
       role: "assistant",
