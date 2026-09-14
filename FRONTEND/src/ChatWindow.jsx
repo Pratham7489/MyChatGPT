@@ -23,6 +23,11 @@ function ChatWindow() {
   const [error, setError] = useState("");
 
   const getReply = async () => {
+    if (!prompt.trim()) {
+      setError("Please enter a message.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
