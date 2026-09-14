@@ -1,7 +1,7 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { PulseLoader } from "react-spinners";
 
 function ChatWindow() {
@@ -21,12 +21,20 @@ function ChatWindow() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState("");
+   
+  const requestInFlight = useRef(false);
 
   const getReply = async () => {
+    if (requestInFlight.current) {
+      return;
+    }
+
     if (!prompt.trim()) {
       setError("Please enter a message.");
       return;
     }
+
+    requestInFlight.current = true;
 
     setLoading(true);
     setError("");
@@ -54,12 +62,15 @@ function ChatWindow() {
       }
 
       setReply(res.reply);
-
     } catch (error) {
+
       console.log("Error fetching reply:", error);
       setError(error.message);
+    } finally {
+
+      requestInFlight.current = false;
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   // Append new chats to prevChats
